@@ -1,8 +1,21 @@
 import { createStore } from "vuex";
+import createPersistedState from "vuex-persistedstate";
+import user from "@/store/user";
+import cart from "@/store/cart";
+import category from "@/store/category";
 
-export default createStore({
-  state: {},
-  mutations: {},
-  actions: {},
-  modules: {},
+const store = createStore({
+  modules: {
+    user,
+    cart,
+    category,
+  },
+  plugins: [
+    createPersistedState({
+      paths: ["user", "cart"],
+      //指定数据存储在localStorage中的名字
+      key: "rabbit-client-pc",
+    }),
+  ],
 });
+export default store;
