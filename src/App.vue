@@ -1,22 +1,25 @@
 <template>
-  {{ user }}
-  <button @click="onClickHandler">button</button>
+  <div class="box">box</div>
+  <RouterView />
 </template>
 <script>
-import { useStore } from "vuex";
+// import { requestWithoutToken } from "@/utils/requset";
 
 export default {
   setup() {
-    //获取store对象
-    const store = useStore();
-    //按钮点击事件的事件处理函数
-    const onClickHandler = () => {
-      //设置用户信息
-      store.commit("user/setUser", { id: "齐天大圣" });
-    };
-    const user = store.state.user;
-    return { onClickHandler, user };
+    // const onClickHandler = () => {
+    //   requestWithoutToken("/home/banner", "get", { distributionSite: 1 }).then(
+    //     (data) => {
+    //       console.log(data);
+    //     }
+    //   );
+    // };
+    // return { onClickHandler };
   },
 };
 </script>
-<style lang="less"></style>
+<style lang="less">
+.box {
+  color: @xtxColor;
+}
+</style>
