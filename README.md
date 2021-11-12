@@ -1,5 +1,5 @@
 # rabbit-client-pc
-# 小兔仙PC端
+# 小兔鲜PC端
 ## Project setup
 ```
 yarn install
