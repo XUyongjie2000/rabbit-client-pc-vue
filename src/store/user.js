@@ -7,7 +7,7 @@ const user = {
       // 用户信息
       profile: {
         // 用户id
-        id: "",
+        id: "User.js",
         // 用户头像
         avatar: "",
         // 用户昵称
@@ -17,7 +17,7 @@ const user = {
         // 用户手机号
         mobile: "",
         // 用户登录凭证
-        token: "",
+        token: "test",
       },
     };
   },

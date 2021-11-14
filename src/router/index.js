@@ -1,10 +1,19 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import HomePage from "@/views/home/HomePage";
-
+const HomePage = () => import("@/views/home/HomePage");
+const TopCategoryPage = () => import("@/views/category/TopCategoryPage");
+const SubCategoryPage = () => import("@/views/category/SubCategoryPage");
 const routes = [
   {
     page: "/",
     component: HomePage,
+  },
+  {
+    path: "/category/:id",
+    component: TopCategoryPage,
+  },
+  {
+    path: "/category/sub/:id",
+    component: SubCategoryPage,
   },
 ];
 

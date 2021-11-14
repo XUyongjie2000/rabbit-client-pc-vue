@@ -1,12 +1,17 @@
 <template>
-  <AppLayout>homepage</AppLayout>
+  <AppLayout>
+    <div class="container">
+      <HomeCategory />
+    </div>
+  </AppLayout>
 </template>
 
 <script>
 import AppLayout from "@/components/AppLayout";
+import HomeCategory from "@/views/home/components/HomeCategory";
 export default {
   name: "HomePage",
-  components: { AppLayout },
+  components: { HomeCategory, AppLayout },
 };
 </script>
 

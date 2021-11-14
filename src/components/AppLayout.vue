@@ -1,6 +1,7 @@
 <template>
   <AppTopNav />
   <AppHeader />
+  <AppHeaderSticky />
   <slot />
   <AppFooter />
 </template>
@@ -9,9 +10,15 @@
 import AppTopNav from "@/components/AppTopNav";
 import AppHeader from "@/components/AppHeader";
 import AppFooter from "@/components/AppFooter";
+import { useStore } from "vuex";
+import AppHeaderSticky from "@/components/AppHeaderSticke";
 export default {
   name: "AppLayout",
-  components: { AppFooter, AppHeader, AppTopNav },
+  components: { AppHeaderSticky, AppFooter, AppHeader, AppTopNav },
+  setup() {
+    const store = useStore();
+    store.dispatch("category/getCategories");
+  },
 };
 </script>
 
