@@ -2,16 +2,20 @@
   <AppLayout>
     <div class="container">
       <HomeCategory />
+      <HomeBanner />
     </div>
+    <HomeNew />
   </AppLayout>
 </template>
 
 <script>
 import AppLayout from "@/components/AppLayout";
 import HomeCategory from "@/views/home/components/HomeCategory";
+import HomeBanner from "@/views/home/components/HomeBanner";
+import HomeNew from "@/views/home/components/HomeNew";
 export default {
   name: "HomePage",
-  components: { HomeCategory, AppLayout },
+  components: { HomeNew, HomeBanner, HomeCategory, AppLayout },
 };
 </script>
 
