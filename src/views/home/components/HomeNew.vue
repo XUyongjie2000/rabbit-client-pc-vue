@@ -1,5 +1,5 @@
 <template>
-  <HomePanel title="新鲜好物" subTitle="新鲜出炉 品质靠谱">
+  <HomePanel title="新鲜好物" subTitle="新鲜出炉 品质靠谱" ref="target">
     <template v-slot:right>
       <XtxMore />
     </template>
@@ -13,31 +13,34 @@
           </RouterLink>
         </li>
       </ul>
+      <transition name="fade">
+        <HomeSkeleton v-if="!homeNew" />
+      </transition>
     </template>
   </HomePanel>
 </template>
 <script>
 import HomePanel from "@/views/home/components/HomePanel";
-import { ref } from "vue";
 import { getNewGoods } from "@/api/home";
+import useLazyData from "@/hooks/useLazyData";
+import HomeSkeleton from "@/views/home/components/HomeSkeleton";
 export default {
   name: "HomeNew",
-  components: { HomePanel },
+  components: { HomeSkeleton, HomePanel },
   setup() {
-    const { homeNew, getData } = useHomeNew();
-    getData();
-    return { homeNew };
+    const { result: homeNew, target } = useLazyData(getNewGoods);
+    return { homeNew, target };
   },
 };
-function useHomeNew() {
-  const homeNew = ref();
-  const getData = () => {
-    getNewGoods().then((data) => {
-      homeNew.value = data.result;
-    });
-  };
-  return { homeNew, getData };
-}
+// function useHomeNew() {
+//   const homeNew = ref();
+//   const getData = () => {
+//     getNewGoods().then((data) => {
+//       homeNew.value = data.result;
+//     });
+//   };
+//   return { homeNew, getData };
+// }
 </script>
 <style scoped lang="less">
 .goods-list {
@@ -62,5 +65,8 @@ function useHomeNew() {
       color: @priceColor;
     }
   }
+}
+.home-skeleton {
+  top: 115px;
 }
 </style>
