@@ -26,8 +26,17 @@
           </li>
         </ul>
         <transition name="fade">
-          <HomeSkeleton v-if="!hotBrands" />
-        </transition>
+          <div class="skeleton">
+            <xtx-skeleton
+              class="item"
+              v-for="i in 5"
+              :key="i"
+              animated="scroll"
+              bg="#e4e4e4"
+              width="240px"
+              height="305px"
+            /></div
+        ></transition>
       </div>
     </template>
   </HomePanel>
@@ -37,22 +46,31 @@
 import HomePanel from "@/views/home/components/HomePanel";
 import { getBrands } from "@/api/home";
 import useLazyData from "@/hooks/useLazyData";
-import HomeSkeleton from "@/views/home/components/HomeSkeleton";
 import { ref } from "vue";
+import XtxSkeleton from "@/components/library/XtxSkeleton";
 export default {
   name: "HomeBrand",
-  components: { HomeSkeleton, HomePanel },
+  components: { XtxSkeleton, HomePanel },
   setup() {
-    const { target, result: hotBrands } = useLazyData(getBrands);
-    const currentIndex = ref(0);
-    const toggle = (step) => {
-      const nextIndex = currentIndex.value + step;
-      if (nextIndex < 0 || nextIndex > 1) return;
-      currentIndex.value = nextIndex;
-    };
+    const { target, result: hotBrands } = useLazyData(() => getBrands(10));
+    const { toggle, currentIndex } = useToggle();
     return { target, hotBrands, toggle, currentIndex };
   },
 };
+function useToggle() {
+  //动画索引
+  const currentIndex = ref(0);
+  //更改索引
+  const toggle = (step) => {
+    //机算目标索引
+    const nextIndex = currentIndex.value + step;
+    //控制索引范围
+    if (nextIndex < 0 || nextIndex > 1) return;
+    //真正的更改索引
+    currentIndex.value = nextIndex;
+  };
+  return { toggle, currentIndex };
+}
 </script>
 
 <style scoped lang="less">
@@ -98,6 +116,17 @@ export default {
         width: 240px;
         height: 305px;
       }
+    }
+  }
+}
+.skeleton {
+  width: 100%;
+  display: flex;
+  top: 115px;
+  .item {
+    margin-right: 10px;
+    &:nth-child(5n) {
+      margin-right: 0;
     }
   }
 }

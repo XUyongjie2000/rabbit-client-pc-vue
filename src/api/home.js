@@ -42,3 +42,15 @@ export function getNewGoods(limit = 4) {
 export function getHomeHot() {
   return requestWithoutToken("/home/hot", "get");
 }
+
+/**
+ * 获取产品区块数据
+ * @returns {Promise}
+ */
+export function getProducts() {
+  return requestWithoutToken("/home/goods", "get");
+}
+
+export function getSpecial() {
+  return requestWithoutToken("/home/special", "get");
+}
