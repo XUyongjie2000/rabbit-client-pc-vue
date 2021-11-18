@@ -1,20 +1,11 @@
 <template>
   <RouterView />
+  <!--  <XtxHeading :level="1">我是h1</XtxHeading>-->
+  <!--  <XtxHeading :level="2">我是h2</XtxHeading>-->
 </template>
 <script>
-// import { requestWithoutToken } from "@/utils/requset";
-
 export default {
-  setup() {
-    // const onClickHandler = () => {
-    //   requestWithoutToken("/home/banner", "get", { distributionSite: 1 }).then(
-    //     (data) => {
-    //       console.log(data);
-    //     }
-    //   );
-    // };
-    // return { onClickHandler };
-  },
+  setup() {},
 };
 </script>
 <style lang="less">

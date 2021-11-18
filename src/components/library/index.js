@@ -1,13 +1,20 @@
-import XtxSkeleton from "@/components/library/XtxSkeleton";
-import XtxCarousel from "@/components/library/XtxCarousel";
-import XtxMore from "@/components/library/XtxMore";
 import lazy from "@/components/directives/lazy";
+//1.获取模块的路径集合 获取模块的导入函数
+const improtFn = require.context("./", false, /\.vue$/);
+// console.log(improtFn.keys());
+//2.获取要导入的文件的路径
+const keys = improtFn.keys();
 const library = {
   install(app) {
-    app.component(XtxSkeleton.name, XtxSkeleton);
-    app.component(XtxCarousel.name, XtxCarousel);
-    app.component(XtxMore.name, XtxMore);
     app.directive("lazy", lazy);
+    //遍历要导入的文件路径
+    keys.forEach((item) => {
+      // console.log(item);
+      //动态导入组件
+      const component = improtFn(item).default;
+      //注册组件
+      app.component(component.name, component);
+    });
   },
 };
 export default library;
