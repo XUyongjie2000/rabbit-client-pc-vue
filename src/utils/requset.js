@@ -6,7 +6,7 @@ import router from "@/router";
 //2.创建baseURL变量 用于存储基准的请求地址
 // 线上环境: https://apipc-xiaotuxian-front.itheima.net/
 // 开发环境: http://pcapi-xiaotuxian-front-devtest.itheima.net/
-const baseURL = "http://pcapi-xiaotuxian-front-devtest.itheima.net/";
+const baseURL = "https://apipc-xiaotuxian-front.itheima.net/";
 //1.创建一个新的axios实例对象  用于配置和小兔仙应用相关的请求
 //instanceWithToken携带token的实例对象
 const instanceWithToken = axios.create({ baseURL });
