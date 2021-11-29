@@ -51,7 +51,7 @@ instanceWithToken.interceptors.response.use(
 );
 //不携带token 响应拦截器
 instanceWithoutToken.interceptors.response.use((response) => {
-  console.log(response);
+  // console.log(response);
   return response.data;
 });
 //5.用于发送请求的函数

@@ -25,8 +25,12 @@
           <!-- 右侧 -->
           <div class="spec">
             <GoodsInfo :goods="goodsDetail" />
-            <!--规格组件-->
-            <GoodsSku :skus="goodsDetail.skus" :specs="goodsDetail.specs" />
+            <!--规格组件  skuId="1369155865461919746"-->
+            <GoodsSku
+              @onSpecChanged="onSpecChanged"
+              :skus="goodsDetail.skus"
+              :specs="goodsDetail.specs"
+            />
           </div>
         </div>
         <!-- 商品推荐 -->
@@ -71,7 +75,14 @@ export default {
     const { goodsDetail, getData } = useGoodsDetail();
     const route = useRoute();
     getData(route.params.id);
-    return { goodsDetail };
+    //当用户选择完成的规格以后 更新视图
+    const onSpecChanged = (data) => {
+      // console.log(data);
+      goodsDetail.value.price = data.price;
+      goodsDetail.value.oldPrice = data.oldPrice;
+      goodsDetail.value.inventory = data.inventory;
+    };
+    return { goodsDetail, onSpecChanged };
   },
 };
 //用于获取商品详情信息的方法
