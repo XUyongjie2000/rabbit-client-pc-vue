@@ -130,10 +130,11 @@ function updateDisabled(specs, pathMap) {
       const key = selected.filter((item) => item).join("_");
       console.log(key);
       //如果再规格查询对象中 没有当前规格
-      if (!(key in pathMap)) {
-        //禁用当前规格
-        value.disabled = true;
-      }
+      // if (!(key in pathMap)) {
+      //   //禁用当前规格
+      //   value.disabled = true;
+      // }
+      value.disabled = !(key in pathMap);
     });
   });
 }
