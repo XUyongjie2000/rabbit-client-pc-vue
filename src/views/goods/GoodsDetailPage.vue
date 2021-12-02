@@ -50,7 +50,7 @@
           <div class="goods-article">
             <!-- 商品+评价 -->
             <GoodsTab />
-            <div class="goods-tabs"></div>
+            <!--            <div class="goods-tabs"></div>-->
             <!-- 注意事项 -->
             <div class="goods-warn">
               <GoodsWarn />
