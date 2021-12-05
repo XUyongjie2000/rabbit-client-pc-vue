@@ -1,29 +1,60 @@
 <template>
   <div class="xtx-pagination">
-    {{ pageInfo.pageNumberAry }}
-    <a href="javascript:">上一页</a>
-    <span>...</span>
-    <a href="javascript:">3</a>
-    <a href="javascript:">4</a>
-    <a href="javascript:" class="active">5</a>
-    <a href="javascript:">6</a>
-    <a href="javascript:">7</a>
-    <span>...</span>
-    <a href="javascript:">下一页</a>
+    <!--如果当前页大于一 表示有上一页 渲染上一页按钮-->
+    <a
+      href="javascript:"
+      @click="currentPage = currentPage - 1"
+      v-if="currentPage > 1"
+      >上一页</a
+    >
+    <!--如果显示着的结束页码小于总页数 表示后边还有页码 渲染-->
+    <span v-if="pageInfo.start > 1">...</span>
+    <a
+      :class="{ active: item === currentPage }"
+      @click="currentPage = item"
+      v-for="item in pageInfo.pageNumberAry"
+      :key="item"
+      href="javascript:"
+      >{{ item }}</a
+    >
+    <!--如果显示着的结束页码小于总页数 表示后面还有页码 渲染-->
+    <span v-if="pageInfo.end < pageInfo.totalPage">...</span>
+    <!--如果当前页小于总页数 表示有下一页 渲染下一页按钮-->
+    <a
+      href="javascript:"
+      @click="currentPage = currentPage + 1"
+      v-if="currentPage < pageInfo.totalPage"
+      >下一页</a
+    >
   </div>
 </template>
 <script>
-import { computed, ref } from "vue";
+import { computed } from "vue";
+import { useVModel } from "@vueuse/core";
 
 export default {
   name: "XtxPagination",
-  setup() {
+  props: {
+    page: {
+      type: Number,
+      default: 1,
+    },
+    counts: {
+      type: Number,
+      default: 0,
+    },
+    pageSize: {
+      type: Number,
+      default: 10,
+    },
+  },
+  setup(props, { emit }) {
     //当前页
-    const currentPage = ref(1);
+    const currentPage = useVModel(props, "page", emit);
     //总数据条数
-    const total = ref(20);
+    const total = computed(() => props.counts);
     //每页显示的数据条数
-    const pageSize = ref(10);
+    const pageSize = computed(() => props.pageSize);
     //页面中一次最多显示的页码数量
     const pageButtonMaxNumber = 5;
     //页码的偏移量
@@ -57,7 +88,7 @@ export default {
       for (let i = start; i <= end; i++) {
         pageNumberAry.push(i);
       }
-      return { pageNumberAry };
+      return { pageNumberAry, totalPage, start, end };
     });
     return { pageInfo, currentPage };
   },

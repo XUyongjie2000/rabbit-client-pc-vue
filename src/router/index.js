@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
+const LoginPage = () => import("@/views/login/LoginPage");
 const HomePage = () => import("@/views/home/HomePage");
 const TopCategoryPage = () => import("@/views/category/TopCategoryPage");
 const SubCategoryPage = () => import("@/views/category/SubCategoryPage");
@@ -19,6 +20,10 @@ const routes = [
   {
     path: "/goods/:id",
     component: GoodsDetailPage,
+  },
+  {
+    path: "/login",
+    component: LoginPage,
   },
 ];
 

@@ -85,7 +85,12 @@
         </div>
       </div>
     </div>
-    <XtxPagination />
+    <!--@update:page="updateReqParams({ page: $event })"-->
+    <XtxPagination
+      :pageSize="reqParams.pageSize"
+      :counts="counts"
+      v-model:page="reqParams.page"
+    />
   </div>
 </template>
 <script>
@@ -108,6 +113,7 @@ export default {
       formatAttrs,
       updateReqParams,
       reqParams,
+      counts,
     } = useCommentList();
     return {
       commentInfo,
@@ -117,6 +123,7 @@ export default {
       formatAttrs,
       updateReqParams,
       reqParams,
+      counts,
     };
   },
 };
@@ -187,10 +194,14 @@ function useCommentList() {
       };
     }
   };
+  //总数据条数
+  const counts = ref(0);
   //用于获取评价列表数据
   const getData = () => {
     //向服务器端发起请求获取评价列表数据
     getCommentList(reqParams.value).then((data) => {
+      //设置总数据条数
+      counts.value = data.result.counts;
       //用于存储评价列表数据
       commentList.value = data.result;
     });
@@ -202,6 +213,7 @@ function useCommentList() {
     },
     {
       immediate: true,
+      deep: true,
     }
   );
 
@@ -219,6 +231,7 @@ function useCommentList() {
     formatAttrs,
     updateReqParams,
     reqParams,
+    counts,
   };
 }
 </script>
