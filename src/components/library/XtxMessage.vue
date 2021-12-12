@@ -12,7 +12,7 @@ import { onMounted, ref } from "vue";
 export default {
   name: "XtxMessage",
   props: {
-    //消息提示类型
+    // 消息提示类型
     type: {
       type: String,
       default: "success",
@@ -46,9 +46,9 @@ export default {
         borderColor: "rgb(225, 243, 216)",
       },
     };
-    //默认提示框是隐藏的
+    // 默认提示框是隐藏的
     const show = ref(false);
-    //组件挂载完成之后渲染 目的是做动画
+    // 组件挂载完成之后渲染 目的是做动画
     onMounted(() => {
       show.value = true;
     });
@@ -88,9 +88,14 @@ export default {
     &-active {
       transition: all 0.5s;
     }
+  }
+  &-leave {
     &-to {
-      transform: none;
-      opacity: 1;
+      transform: translate3d(0, -75px, 0);
+      opacity: 0;
+    }
+    &-active {
+      transition: all 0.5s;
     }
   }
 }
