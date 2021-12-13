@@ -28,3 +28,45 @@ export function getMsgCodeByMobileLogin(mobile) {
 export function loginByMobile({ mobile, code }) {
   return requestWithoutToken("/login/code", "post", { mobile, code });
 }
+
+/**
+ *根据openid检索小兔仙账号 第三方登录
+ * @param unionId QQ openid
+ * @returns {Promise}
+ */
+export function findAccountByOpenId({ unionId }) {
+  return requestWithoutToken("/login/social", "post", { unionId, source: 1 });
+}
+
+/**
+ * 获取手机验证码 （绑定手机号和QQ号）
+ * @param mobile  手机号
+ * @returns {Promise}
+ */
+export function getMsgCodeWhenBindQQ(mobile) {
+  return requestWithoutToken("/login/social/code", "get", { mobile });
+}
+
+/**
+ * 绑定手机号和qq号
+ * @param unionId 三方标识  QQ openid
+ * @param mobile 手机号
+ * @param code 验证码
+ * @returns {Promise}
+ */
+export function bindMobileAndQQ({ unionId, mobile, code }) {
+  return requestWithoutToken("/login/social/bind", "post", {
+    unionId,
+    mobile,
+    code,
+  });
+}
+
+/**
+ * 检测用户名或者手机号是否唯一
+ * @param account 手机号或者用户名
+ * @returns {Promise}
+ */
+export function checkUsernameIsUnique(account) {
+  return requestWithoutToken("/register/check", "get", { account });
+}

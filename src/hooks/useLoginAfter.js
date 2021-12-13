@@ -5,6 +5,7 @@ import { useStore } from "vuex";
 export default function useLoginAfter() {
   const router = useRouter();
   const store = useStore();
+  //登录成功后做的事情
   const loginSuccess = (data) => {
     //1.存储用户信息
     store.commit("user/setUser", {
@@ -26,6 +27,7 @@ export default function useLoginAfter() {
     //3.登录成功的提示
     Message({ type: "success", text: "登录成功" });
   };
+  //登录失败后做的事情
   const loginFail = () => {
     Message({ type: "error", text: "登陆失败" });
   };
