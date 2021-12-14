@@ -30,7 +30,7 @@
       <LoginCallbackBindPhone :unionId="unionId" />
     </div>
     <div class="tab-content" v-else>
-      <LoginCallbackBindPatch />
+      <LoginCallbackBindPatch :unionId="unionId" />
     </div>
   </section>
   <LoginFooter />

@@ -33,7 +33,9 @@
           type="text"
           placeholder="请输入验证码"
         />
-        <span class="code">发送验证码</span>
+        <span class="code" @click="getMsgCode">{{
+          isActive ? `剩余${count}秒` : "发送验证码"
+        }}</span>
       </div>
       <div class="error" v-if="codeError">{{ codeError }}</div>
     </div>
@@ -74,15 +76,59 @@ import {
   password,
   rePassword,
 } from "@/utils/vee-validate-schema";
+import { getMsgCodeByRegister, registerAndBindQQ } from "@/api/user";
+import Message from "@/components/library/Message";
+import useCountDown from "@/hooks/useCountDown";
+import useLoginAfter from "@/hooks/useLoginAfter";
 
 export default {
   name: "LoginCallbackBindPatch",
-  setup() {
-    const { handleSubmit, ...rest } = useRegisterPatch();
-    const onSubmit = handleSubmit((values) => {
-      console.log(values);
-    });
-    return { ...rest, onSubmit };
+  props: {
+    unionId: {
+      type: String,
+    },
+  },
+  setup(props) {
+    const { handleSubmit, getMobileIsValidate, ...rest } = useRegisterPatch();
+    const { count, isActive, start } = useCountDown();
+    const { loginSuccess, loginFail } = useLoginAfter();
+    //表单提交
+    const onSubmit = handleSubmit(
+      ({ checkUserAccount, mobile, code, password }) => {
+        //向服务端发起请求 注册新账号 并且绑定新账号
+        registerAndBindQQ({
+          checkUserAccount,
+          mobile,
+          code,
+          password,
+          unionId: props.unionId,
+        })
+          .then(loginSuccess)
+          .catch(loginFail);
+      }
+    );
+    const getMsgCode = () => {
+      //如果正在倒计时 组织程序不向下运行
+      if (isActive.value) return;
+      //1.验证用户是否输入了手机号
+      getMobileIsValidate().then(({ isValid, mobile }) => {
+        if (isValid) {
+          //向服务端发起请求 获取验证码
+          getMsgCodeByRegister(mobile)
+            .then(() => {
+              Message({ type: "success", text: "验证码发送成功" });
+              start(60);
+            })
+            .catch(() => {
+              Message({ type: "error", text: "验证码发送失败" });
+            });
+        }
+      });
+
+      //2.发送验证码
+      //3.用户提示
+    };
+    return { ...rest, onSubmit, getMsgCode, count, isActive };
   },
 };
 function useRegisterPatch() {
@@ -97,12 +143,21 @@ function useRegisterPatch() {
   });
   const { value: accountField, errorMessage: accountError } =
     useField("checkUserAccount");
-  const { value: mobileField, errorMessage: mobileError } = useField("mobile");
+  const {
+    value: mobileField,
+    errorMessage: mobileError,
+    validate: mobileValidate,
+  } = useField("mobile");
   const { value: codeField, errorMessage: codeError } = useField("code");
   const { value: rePasswordField, errorMessage: rePasswordError } =
     useField("rePassword");
   const { value: passwordField, errorMessage: passwordError } =
     useField("password");
+
+  const getMobileIsValidate = async () => {
+    let { valid } = await mobileValidate();
+    return { isValid: valid, mobile: mobileField.value };
+  };
   return {
     handleSubmit,
     mobileField,
@@ -115,6 +170,7 @@ function useRegisterPatch() {
     passwordError,
     accountField,
     accountError,
+    getMobileIsValidate,
   };
 }
 </script>

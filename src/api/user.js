@@ -70,3 +70,36 @@ export function bindMobileAndQQ({ unionId, mobile, code }) {
 export function checkUsernameIsUnique(account) {
   return requestWithoutToken("/register/check", "get", { account });
 }
+
+/**
+ * 获取手机验证码 完善账号
+ * @param mobile 手机号
+ * @returns {Promise}
+ */
+export function getMsgCodeByRegister(mobile) {
+  return requestWithoutToken("/register/code", "get", { mobile });
+}
+
+/**
+ *注册新账号并绑定手机号
+ * @param account  用户名
+ * @param mobile  手机号
+ * @param code  手机验证码
+ * @param password  密码
+ * @param unionId  QQ用户的openid
+ * @returns {Promise}
+ */
+export function registerAndBindQQ({
+  account,
+  mobile,
+  code,
+  password,
+  unionId,
+}) {
+  return requestWithoutToken(`/login/social/${unionId}/complement`, "post", {
+    account,
+    mobile,
+    code,
+    password,
+  });
+}
