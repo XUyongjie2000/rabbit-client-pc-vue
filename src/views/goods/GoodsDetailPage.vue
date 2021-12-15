@@ -89,6 +89,7 @@ import GoodsTab from "@/views/goods/components/GoodsTab";
 import GoodsHot from "@/views/goods/components/GoodsHot";
 import GoodsWarn from "@/views/goods/components/GoodsWarn";
 import Message from "@/components/library/Message";
+import { useStore } from "vuex";
 export default {
   name: "GoodsDetailPage",
   components: {
@@ -107,6 +108,8 @@ export default {
   setup() {
     const { goodsDetail, getData } = useGoodsDetail();
     const route = useRoute();
+    //获取store对象
+    const store = useStore();
     //用于存储 用户选择的商品数量
     const goodsCount = ref(1);
     //发送请求获取商品详细信息
@@ -154,7 +157,9 @@ export default {
         // 是否为有效商品
         isEffective: true,
       };
-      console.log(goods);
+      // console.log(goods);
+      //将商品加入购物车
+      store.dispatch("cart/addGoodsToCart", goods);
     };
     return { goodsDetail, onSpecChanged, goodsCount, addGoodsToCart };
   },
