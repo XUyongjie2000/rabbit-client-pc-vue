@@ -5,6 +5,7 @@ const TopCategoryPage = () => import("@/views/category/TopCategoryPage");
 const SubCategoryPage = () => import("@/views/category/SubCategoryPage");
 const GoodsDetailPage = () => import("@/views/goods/GoodsDetailPage");
 const LoginCallbackPage = import("@/views/login/LoginCallbackPage");
+const cartPage = import("@/views/cart/cartPage");
 const routes = [
   {
     page: "/",
@@ -29,6 +30,10 @@ const routes = [
   {
     path: "/login/callback",
     component: LoginCallbackPage,
+  },
+  {
+    path: "/cart",
+    component: cartPage,
   },
 ];
 

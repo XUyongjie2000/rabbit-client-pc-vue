@@ -1,9 +1,9 @@
 <template>
   <div class="cart">
-    <a class="curr" href="#">
+    <RouterLink class="curr" to="/cart">
       <i class="iconfont icon-cart"></i><em>{{ effectiveGoodsCount }}</em>
-    </a>
-    <div class="layer">
+    </RouterLink>
+    <div class="layer" v-if="effectiveGoodsCount > 0 && !isCartPage">
       <div class="list">
         <div class="item" v-for="item in effectiveGoodsList" :key="item.id">
           <RouterLink :to="`/goods/${item.id}`">
@@ -28,20 +28,29 @@
           <p>共 {{ effectiveGoodsCount }} 件商品</p>
           <p>&yen;{{ effectiveGoodsPrice }}</p>
         </div>
-        <XtxButton type="plain">去购物车结算</XtxButton>
+        <XtxButton type="plain"
+          ><RouterLink to="/cart"> 去购物车结算 </RouterLink></XtxButton
+        >
       </div>
     </div>
   </div>
 </template>
 <script>
 import { useStore } from "vuex";
-import { computed } from "vue";
+import { computed, ref } from "vue";
+import { useRoute } from "vue-router";
 
 export default {
   name: "AppHeaderCart",
   setup() {
     //获取 store 对象
     const store = useStore();
+    //获取路由信息对象
+    const route = useRoute();
+    //是否是购物车页面
+    const isCartPage = ref(route.path === "/cart");
+    //路由发送更新时重新判断当前页面是否是购物车页面
+
     //获取可购买的商品列表
     const effectiveGoodsList = computed(
       () => store.getters["cart/effectiveGoodsList"]
@@ -63,6 +72,7 @@ export default {
       effectiveGoodsCount,
       effectiveGoodsPrice,
       deleteGoodsOfCart,
+      isCartPage,
     };
   },
 };

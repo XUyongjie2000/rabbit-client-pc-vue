@@ -78,7 +78,7 @@ import GoodsRelevant from "@/views/goods/components/GoodsRelevant";
 import AppLayout from "@/components/AppLayout";
 import { getGoodsDetail } from "@/api/goods";
 import { provide, ref } from "vue";
-import { useRoute } from "vue-router";
+import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import GoodsImages from "@/views/goods/components/GoodsImages";
 import GoodsSales from "@/views/goods/components/GoodsSales";
 import GoodsInfo from "@/views/goods/components/GoodsInfo";
@@ -176,6 +176,11 @@ function useGoodsDetail() {
       goodsDetail.value = data.result;
     });
   };
+  //当路由参数发生变化的时候（id）
+  onBeforeRouteUpdate((to) => {
+    //重新向服务器端发起请求
+    getData(to.params.id);
+  });
   return { goodsDetail, getData };
 }
 </script>

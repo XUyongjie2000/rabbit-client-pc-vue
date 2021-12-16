@@ -1,3 +1,5 @@
+import { updateGoodsOfCartBySkuId } from "@/api/cart";
+
 const cart = {
   //命名空间模块
   namespaced: true,
@@ -36,6 +38,16 @@ const cart = {
         ];
       }
     },
+    //根据skuId更新商品信息
+    updateGoodsBySkuId(state, partOfGoods) {
+      const index = state.list.findIndex(
+        (item) => item.skuId === partOfGoods.skuId
+      );
+      state.list[index] = {
+        ...state.list[index],
+        ...partOfGoods,
+      };
+    },
   },
   actions: {
     //将商品加入购物车
@@ -62,6 +74,25 @@ const cart = {
         commit("deleteGoodsOfCart", skuId);
       }
     },
+    //更新购物车中的商品信息（自动更新）
+    updateGoodsBySkuId({ rootState, state, commit }) {
+      //判断用户是否登录
+      if (rootState.user.profile.token) {
+        //已登录
+      } else {
+        //未登录
+        const promiseAry = state.list.map((item) =>
+          updateGoodsOfCartBySkuId(item.skuId)
+        );
+        // console.log(promiseAry);
+        Promise.all(promiseAry).then((data) => {
+          data.forEach((item, index) => {
+            item.result.skuId = state.list[index].skuId;
+            commit("updateGoodsBySkuId", item.result);
+          });
+        });
+      }
+    },
   },
   getters: {
     //可购买的商品列表
@@ -80,6 +111,29 @@ const cart = {
     //可购买的商品总数
     effectiveGoodsCount(state, getters) {
       return getters.effectiveGoodsList.reduce((count, item) => {
+        return count + item.count;
+      }, 0);
+    },
+
+    //无效商品列表
+    invalidGoodsList(state) {
+      //库存为0
+      //isEffective:true
+      return state.list.filter((item) => item.stock === 0 || !item.isEffective);
+    },
+    //用户选择的商品列表
+    selectedGoodsList(state, getters) {
+      return getters.effectiveGoodsList.filter((item) => item.selected);
+    },
+    //用户选择的商品总价
+    selectedGoodsPrice(state, getters) {
+      return getters.selectedGoodsList.reduce((price, item) => {
+        return price + item.count * Number(item.nowPrice);
+      }, 0);
+    },
+    //用户选择的商品数量
+    selectedGoodsCount(state, getters) {
+      return getters.selectedGoodsList.reduce((count, item) => {
         return count + item.count;
       }, 0);
     },
