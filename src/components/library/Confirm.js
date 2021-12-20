@@ -16,9 +16,13 @@ export default function Confirm({ title, content }) {
     };
     //当用户点击取消按钮时要执行的方法
     const onCancelButtonClickHandler = () => {
-      //如果其他开发者传递了取消逻辑  就执行取消逻辑
       reject();
-      render(null, container);
+      vNode.el.classList.remove("fade");
+      vNode.el.children[0].classList.remove("fade");
+      setTimeout(() => {
+        //如果其他开发者传递了取消逻辑  就执行取消逻辑
+        render(null, container);
+      }, 400);
     };
     //将XtxConfirm单文件组件对象转换成虚拟Dom对象
     const vNode = createVNode(XtxConfirm, {
@@ -29,5 +33,10 @@ export default function Confirm({ title, content }) {
     });
     //渲染XtxConfirm
     render(vNode, container);
+    //执行入场动画
+    setTimeout(() => {
+      vNode.el.classList.add("fade");
+      vNode.el.children[0].classList.add("fade");
+    });
   });
 }

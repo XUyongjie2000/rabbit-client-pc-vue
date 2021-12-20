@@ -51,8 +51,8 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 8888;
-  background: rgba(0, 0, 0, 0.5);
   transition: all 0.4s;
+  background: rgba(0, 0, 0, 0);
   &.fade {
     background: rgba(0, 0, 0, 0.5);
   }
@@ -63,8 +63,9 @@ export default {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
     transition: all 0.4s;
+    transform: translate(-50%, -60%);
+    opacity: 0;
     &.fade {
       transform: translate(-50%, -50%);
       opacity: 1;

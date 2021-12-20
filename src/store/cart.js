@@ -1,4 +1,8 @@
-import { updateGoodsOfCartBySkuId } from "@/api/cart";
+import {
+  getServerCart,
+  mergeServerCart,
+  updateGoodsOfCartBySkuId,
+} from "@/api/cart";
 import Message from "@/components/library/Message";
 
 const cart = {
@@ -13,7 +17,7 @@ const cart = {
     //将商品加入购物车  (本地购物车)
     addGoodsToCart(state, goods) {
       // console.log(goods);
-      //1.查看当前要添加的商品是否已经在购物车中了 通过findindex查找
+      //1.查看当前要添加的商品是否已经在购物车中了 通过findIndex查找
       const index = state.list.findIndex((item) => item.skuId === goods.skuId);
       //没找到返回-1  如果大于-1就是找到了
       if (index > -1) {
@@ -41,7 +45,7 @@ const cart = {
     },
     //根据skuId更新商品信息
     updateGoodsBySkuId(state, partOfGoods) {
-      //根据skuid在购物车列表中 查找需要更新的商品
+      //根据skuId在购物车列表中 查找需要更新的商品
       const index = state.list.findIndex(
         (item) => item.skuId === partOfGoods.skuId
       );
@@ -50,6 +54,10 @@ const cart = {
         ...state.list[index],
         ...partOfGoods,
       };
+    },
+    //设置状态
+    setCate(state, payload) {
+      state.list = payload;
     },
   },
   actions: {
@@ -79,10 +87,14 @@ const cart = {
       }
     },
     //更新购物车中的商品信息（自动更新）
-    updateGoodsBySkuId({ rootState, state, commit }) {
+    async updateGoodsBySkuId({ rootState, state, commit }) {
       //判断用户是否登录
       if (rootState.user.profile.token) {
         //已登录
+        //获取服务器端购物车列表
+        let data = await getServerCart();
+        //重新赋值
+        state.list = data.result;
       } else {
         //未登录
         //遍历购物车中的商品信息
@@ -94,15 +106,15 @@ const cart = {
         //按照循序发送请求   按照顺序 拿请求结果
         Promise.all(promiseAry).then((data) => {
           data.forEach((item, index) => {
-            //为商品添加skuid
-            //因为要根据skuid 更新本地购物车中的商品
+            //为商品添加skuId
+            //因为要根据skuId 更新本地购物车中的商品
             item.result.skuId = state.list[index].skuId;
             commit("updateGoodsBySkuId", item.result);
           });
         });
       }
     },
-    //更新购物车中的商品信息(手动更新)
+    //更新购物车中的商品信息(手动更新) (更新商品数量 商品选中状态)
     updateGoodsOfCartBySkuId({ rootState, commit }, partOfGoods) {
       if (rootState.user.profile.token) {
         //已登录
@@ -124,6 +136,58 @@ const cart = {
           });
         });
       }
+    },
+    //批量删除用户选择的商品 清空无效商品
+    deleteManyGoodsOfCart({ rootState, getters, commit }, flag) {
+      //判断用户是否登录
+      if (rootState.user.profile.token) {
+        //已经登录
+      } else {
+        //为登录
+        getters[flag].forEach((item) => {
+          commit("deleteGoodsOfCart", item.skuId);
+        });
+      }
+    },
+    //修改商品规格信息
+    updateGoodsOfCartBySkuChanged(
+      { rootState, state, commit },
+      { oldSkuId, newSku }
+    ) {
+      //通过oldSkuId 去查找原有商品
+      //通过newSku  构建新的商品
+      if (rootState.user.profile.token) {
+        //已经登录
+      } else {
+        //未登录
+        //查找原有商品
+        const index = state.list.findIndex((item) => item.skuId === oldSkuId);
+        //构建新商品
+        const newGoods = {
+          ...state.list[index],
+          skuId: newSku.skuId,
+          stock: newSku.inventory,
+          oldPrice: newSku.oldPrice,
+          nowPrice: newSku.price,
+          attrsText: newSku.attrsText,
+        };
+        //删除旧商品
+        commit("deleteGoodsOfCart", oldSkuId);
+        //插入新商品
+        commit("addGoodsToCart", newGoods);
+      }
+    },
+    //合并购物车
+    async margeCart({ state, commit }) {
+      //不需要判断用户是否登录 因为在用户登录后触发
+      const cart = state.list.map((item) => ({
+        skuId: item.skuId,
+        selected: item.selected,
+        count: item.count,
+      }));
+      await mergeServerCart(cart);
+      //清空本地购物车
+      commit("setCary", []);
     },
   },
   getters: {
