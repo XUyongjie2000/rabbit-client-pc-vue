@@ -1,9 +1,13 @@
 import Message from "@/components/library/Message";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
 export default function useLoginAfter() {
+  //获取路由对象
   const router = useRouter();
+  //获取路由信息对象
+  const route = useRoute();
+  //获取store对象
   const store = useStore();
   //登录成功后做的事情
   const loginSuccess = (data) => {
@@ -23,7 +27,11 @@ export default function useLoginAfter() {
       token: data.result.token,
     });
     //2.跳转到首页
-    router.push("/").catch(() => {});
+    //后续： 判断路由查询参数 redirectUrl是否存在，如果存在跳转到目标地址 如果不存在跳转到首页
+    //获取 redirectUrl
+    const redirectUrl = String(route.query.redirectUrl);
+    //跳转到目标地址或者首页
+    router.push(redirectUrl || "/").catch(() => {});
     //3.登录成功的提示
     Message({ type: "success", text: "登录成功" });
     //4.合并购物车

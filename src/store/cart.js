@@ -1,7 +1,11 @@
 import {
+  addGoodsToServerCart,
+  deleteGoodsOfServerCart,
   getServerCart,
   mergeServerCart,
+  selectedOrNotSelected,
   updateGoodsOfCartBySkuId,
+  updateGoodsOfServerCart,
 } from "@/api/cart";
 import Message from "@/components/library/Message";
 
@@ -62,13 +66,18 @@ const cart = {
   },
   actions: {
     //将商品加入购物车
-    addGoodsToCart({ rootState, commit }, goods) {
+    async addGoodsToCart({ rootState, commit, dispatch }, goods) {
       //1.如果要加入购物车的商品已经存在了  累加该商品数量
       //2.新添加的购物车商品 要追加到购物车列表的顶部
       //3.判断用户是否登录 如果登录操作服务器端购物车 如果没有 操作本地购物车
       console.log(rootState.user.profile.token);
       if (rootState.user.profile.token) {
         //已经登录
+        //将商品加入到服务端购物车
+        await addGoodsToServerCart({ skuId: goods.skuId, count: goods.count });
+        //将服务端最新购物车更新到本地
+        dispatch("updateGoodsBySkuId");
+        Message({ type: "success", text: "添加购物车成功" });
       } else {
         //未登录
         // console.log(goods);
@@ -77,10 +86,13 @@ const cart = {
       }
     },
     //删除购物车中的商品（skuId）
-    deleteGoodsOfCart({ rootState, commit }, skuId) {
+    async deleteGoodsOfCart({ rootState, commit, dispatch }, skuId) {
       //判断用户是否登录
       if (rootState.user.profile.token) {
         //已登录
+        await deleteGoodsOfServerCart([skuId]);
+        //将服务端最新购物车更新到本地
+        dispatch("updateGoodsBySkuId");
       } else {
         //未登录
         commit("deleteGoodsOfCart", skuId);
@@ -115,18 +127,33 @@ const cart = {
       }
     },
     //更新购物车中的商品信息(手动更新) (更新商品数量 商品选中状态)
-    updateGoodsOfCartBySkuId({ rootState, commit }, partOfGoods) {
+    async updateGoodsOfCartBySkuId(
+      { rootState, commit, dispatch },
+      partOfGoods
+    ) {
       if (rootState.user.profile.token) {
         //已登录
+        await updateGoodsOfServerCart(partOfGoods);
+        //将服务端最新购物车更新到本地
+        dispatch("updateGoodsBySkuId");
       } else {
         commit("updateGoodsBySkuId", partOfGoods);
         //未登录
       }
     },
-    //实现全选和全不全
-    selectedAll({ rootState, state, commit }, isSelected) {
+    //实现全选和全不选
+    async selectedAll(
+      { rootState, state, commit, dispatch, getters },
+      isSelected
+    ) {
       if (rootState.user.profile.token) {
         //已登录
+        //收集要修改的有效商品的skuId数组
+        const ids = getters.effectiveGoodsList.map((item) => item.skuId);
+        //向服务端发送请求  更改商品的选中状态
+        await selectedOrNotSelected({ selected: isSelected, ids });
+        //将服务端最新购物车更新到本地
+        dispatch("updateGoodsBySkuId");
       } else {
         //未登录
         state.list.forEach((item) => {
@@ -138,10 +165,19 @@ const cart = {
       }
     },
     //批量删除用户选择的商品 清空无效商品
-    deleteManyGoodsOfCart({ rootState, getters, commit }, flag) {
+    async deleteManyGoodsOfCart(
+      { rootState, getters, commit, dispatch },
+      flag
+    ) {
       //判断用户是否登录
       if (rootState.user.profile.token) {
         //已经登录
+        //1.收集要删除的商品的skuId 存储到一个数组中
+        const ids = getters[flag].map((item) => item.skuId);
+        //2.发送请求进行删除
+        await deleteGoodsOfServerCart(ids);
+        //3.更新本地购物车列表
+        dispatch("updateGoodsBySkuId");
       } else {
         //为登录
         getters[flag].forEach((item) => {
@@ -150,18 +186,28 @@ const cart = {
       }
     },
     //修改商品规格信息
-    updateGoodsOfCartBySkuChanged(
-      { rootState, state, commit },
+    async updateGoodsOfCartBySkuChanged(
+      { rootState, state, commit, dispatch },
       { oldSkuId, newSku }
     ) {
+      //查找原有商品
+      const index = state.list.findIndex((item) => item.skuId === oldSkuId);
       //通过oldSkuId 去查找原有商品
       //通过newSku  构建新的商品
       if (rootState.user.profile.token) {
         //已经登录
+        //删除原有商品
+        await deleteGoodsOfServerCart([oldSkuId]);
+        //添加新的商品
+        await addGoodsToServerCart({
+          skuId: newSku.skuId,
+          count: state.list[index].count,
+        });
+        //3.更新本地购物车列表
+        dispatch("updateGoodsBySkuId");
       } else {
         //未登录
-        //查找原有商品
-        const index = state.list.findIndex((item) => item.skuId === oldSkuId);
+
         //构建新商品
         const newGoods = {
           ...state.list[index],

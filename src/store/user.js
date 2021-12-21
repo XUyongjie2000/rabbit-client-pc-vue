@@ -37,7 +37,7 @@ const user = {
         };
       } else {
         //空对象
-        state.payload = {};
+        state.profile = {};
       }
     },
   },
