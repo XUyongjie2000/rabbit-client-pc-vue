@@ -35,13 +35,15 @@ export default function useLoginAfter() {
     //3.登录成功的提示
     Message({ type: "success", text: "登录成功" });
     //4.合并购物车
-    store.dispatch("cart/margeCart").catch((error) => {
-      console.log(error);
-    });
-    //获取服务器端购物车列表
-    store.dispatch("cart/updateGoodsBySkuId").catch((error) => {
-      console.log(error);
-    });
+    store
+      .dispatch("cart/margeCart")
+      .then(() => {
+        //获取服务器端购物车列表
+        return store.dispatch("cart/updateGoodsBySkuId");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
   //登录失败后做的事情
   const loginFail = () => {
