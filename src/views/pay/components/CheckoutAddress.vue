@@ -1,5 +1,5 @@
 <template>
-  <div class="address" v-if="finalAddress">
+  <div class="address">
     <div class="text">
       <div v-if="!finalAddress" class="none">
         您需要先添加收货地址才可提交订单。
@@ -22,23 +22,32 @@
       <a href="javascript:" @click="modifyAddress">修改地址</a>
     </div>
     <div class="action">
-      <XtxButton class="btn">切换地址</XtxButton>
+      <XtxButton class="btn" @click="switchAddress">切换地址</XtxButton>
       <XtxButton class="btn" @click="addAddress">添加地址</XtxButton>
     </div>
   </div>
   <AddressEdit ref="addressEditInstance" @onAddressChanged="onAddressChanged" />
+  <AddressSwitch
+    ref="addressSwitchInstance"
+    :list="addresses"
+    @onAddressChanged="onAddressChanged"
+    :activeAddressId="finalAddress?.id"
+  />
 </template>
 
 <script>
 import AddressEdit from "@/views/pay/components/AddressEdit";
 import { computed, ref } from "vue";
 import { getAddress } from "@/api/order";
+import AddressSwitch from "@/views/pay/components/AddressSwitch";
 export default {
   name: "CheckoutAddress",
-  components: { AddressEdit },
+  components: { AddressSwitch, AddressEdit },
   setup() {
     //获取收获地址编辑组件的实例对象
     const addressEditInstance = ref();
+    //获取切换收货地址组件的实例对象
+    const addressSwitchInstance = ref();
     const { addresses, finalAddress, onAddressChanged } = useAddressList();
     //添加收货地址
     const addAddress = () => {
@@ -80,6 +89,11 @@ export default {
         addressEditInstance.value.XtxCityInstance.location = fullLocation;
       }, 0);
     };
+    //切换收获地址
+    const switchAddress = () => {
+      //渲染切换收获地址组件
+      addressSwitchInstance.value.visible = true;
+    };
     return {
       addAddress,
       addressEditInstance,
@@ -87,6 +101,8 @@ export default {
       finalAddress,
       onAddressChanged,
       modifyAddress,
+      addressSwitchInstance,
+      switchAddress,
     };
   },
 };

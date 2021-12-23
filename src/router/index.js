@@ -8,6 +8,9 @@ const GoodsDetailPage = () => import("@/views/goods/GoodsDetailPage");
 const LoginCallbackPage = import("@/views/login/LoginCallbackPage");
 const cartPage = import("@/views/cart/cartPage");
 const CheckoutPage = () => import("@/views/pay/CheckoutPage");
+const PayPage = () => import("@/views/pay/PayPage");
+const PayResultPage = () => import("@/views/pay/PayResultPage");
+const MemberHomePage = () => import("@/views/member/home/MemberHomePage");
 const routes = [
   {
     page: "/",
@@ -40,6 +43,18 @@ const routes = [
   {
     path: "/checkout/order",
     component: CheckoutPage,
+  },
+  {
+    path: "/checkout/pay",
+    component: PayPage,
+  },
+  {
+    path: "/pay/callback",
+    component: PayResultPage,
+  },
+  {
+    path: "/member/home",
+    component: MemberHomePage,
   },
 ];
 

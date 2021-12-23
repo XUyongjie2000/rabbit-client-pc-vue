@@ -11,7 +11,7 @@
           <!-- 收货地址 -->
           <h3 class="box-title">收货地址</h3>
           <div class="box-body">
-            <CheckoutAddress />
+            <CheckoutAddress ref="checkoutAddressInstance" />
           </div>
           <!-- 商品信息 -->
           <h3 class="box-title">商品信息</h3>
@@ -87,7 +87,7 @@
           </div>
           <!-- 提交订单 -->
           <div class="submit">
-            <XtxButton type="primary">提交订单</XtxButton>
+            <XtxButton @click="saveOrder" type="primary">提交订单</XtxButton>
           </div>
         </div>
       </div>
@@ -97,14 +97,61 @@
 <script>
 import AppLayout from "@/components/AppLayout";
 import { ref } from "vue";
-import { createOrder } from "@/api/order";
+import { createOrder, submitOrder } from "@/api/order";
 import CheckoutAddress from "@/views/pay/components/CheckoutAddress";
+import Message from "@/components/library/Message";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 export default {
   name: "CheckoutPage",
   components: { CheckoutAddress, AppLayout },
   setup() {
+    //获取路由对象
+    const router = useRouter();
+    //获取store对象
+    const store = useStore();
     const { orderInfo } = useOrderInfo();
-    return { orderInfo };
+    //获取收获地址组件的实例对象
+    const checkoutAddressInstance = ref();
+    //当用户点击提交订单按钮的时候执行
+    const saveOrder = () => {
+      //收集订单信息
+      const order = {
+        //订单商品集合
+        goods: orderInfo.value.goods.map((item) => ({
+          skuId: item.skuId,
+          count: item.count,
+        })),
+        //收获地址id
+        addressId: checkoutAddressInstance.value.finalAddress?.id,
+        //配送时间类型，1为不限，2为工作日，3为双休或假日
+        deliveryTimeType: 1,
+        //支付方式，1为在线支付，2为货到付款
+        payType: 1,
+        //支付渠道：支付渠道，1支付宝、2微信--支付方式为在线支付时，传值，为货到付款时，不传值
+        payChannel: 1,
+        //买家留言
+        buyerMessage: "",
+      };
+      //判断收货地址是否存在
+      if (!order.addressId) {
+        return Message({ type: "error", text: "请添加收货地址" });
+      }
+      //提交订单
+      submitOrder(order).then((data) => {
+        //订单提交成功以后要做什么
+        //1.跳转到支付页面 将订单id作为路由参数
+        router.push({
+          path: "/checkout/pay",
+          query: {
+            orderId: data.result.id,
+          },
+        });
+        //2.将服务器端购物车中的商品同步到客户端
+        store.dispatch("cart/updateGoodsBySkuId");
+      });
+    };
+    return { orderInfo, saveOrder, checkoutAddressInstance };
   },
 };
 function useOrderInfo() {
