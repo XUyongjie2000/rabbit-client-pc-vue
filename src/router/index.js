@@ -11,6 +11,9 @@ const CheckoutPage = () => import("@/views/pay/CheckoutPage");
 const PayPage = () => import("@/views/pay/PayPage");
 const PayResultPage = () => import("@/views/pay/PayResultPage");
 const MemberHomePage = () => import("@/views/member/home/MemberHomePage");
+const OrderListPage = () => import("@/views/member/order/OrderListPage");
+const OrderDetailPage = () => import("@/views/member/order/OrderDetailPage");
+const OrderView = () => import("@/views/member/order/OrderView");
 const routes = [
   {
     page: "/",
@@ -56,6 +59,20 @@ const routes = [
     path: "/member/home",
     component: MemberHomePage,
   },
+  {
+    path: "/member/order",
+    component: OrderView,
+    children: [
+      {
+        path: "",
+        component: OrderListPage,
+      },
+      {
+        path: ":id",
+        component: OrderDetailPage,
+      },
+    ],
+  },
 ];
 
 const router = createRouter({
@@ -63,6 +80,8 @@ const router = createRouter({
   scrollBehavior() {
     return { top: 0 };
   },
+  linkActiveClass: "fuzzy-active",
+  linkExactActiveClass: "exact-active",
   routes,
 });
 

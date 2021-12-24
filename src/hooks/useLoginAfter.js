@@ -29,7 +29,8 @@ export default function useLoginAfter() {
     //2.跳转到首页
     //后续： 判断路由查询参数 redirectUrl是否存在，如果存在跳转到目标地址 如果不存在跳转到首页
     //获取 redirectUrl
-    const redirectUrl = String(route.query.redirectUrl);
+    const redirectUrl = route.query.redirectUrl;
+    console.log("redirectUrl", redirectUrl);
     //跳转到目标地址或者首页
     router.push(redirectUrl || "/").catch(() => {});
     //3.登录成功的提示

@@ -1,13 +1,11 @@
 <template>
   <RouterView />
 </template>
+
 <script>
 export default {
-  components: {},
+  name: "OrderView",
 };
 </script>
-<style lang="less">
-.box {
-  color: @xtxColor;
-}
-</style>
+
+<style scoped></style>

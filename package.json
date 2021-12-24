@@ -8,12 +8,15 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@types/faker": "^5.5.9",
     "@vueuse/core": "6.1.0",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
     "dayjs": "1.10.7",
+    "faker": "^5.5.3",
     "json-server": "^0.17.0",
     "lodash": "^4.17.21",
+    "msw": "^0.35.0",
     "normalize.css": "8.0.1",
     "vee-validate": "4.4.11",
     "vue": "^3.0.0",
@@ -48,5 +51,8 @@
       "vue-cli-service lint",
       "git add"
     ]
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }
