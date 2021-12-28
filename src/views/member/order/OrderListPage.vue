@@ -14,6 +14,7 @@
             v-for="order in orderList.items"
             :key="order.id"
             @onCancelOrder="onCancelOrder"
+            @onReloadOrderList="getData"
           />
         </template>
         <div v-if="!loading && orderList?.items?.length === 0" class="none">
@@ -28,7 +29,7 @@
       </div>
     </div>
   </AppMemberLayout>
-  <CancelOrder ref="cancelOrderInstance" />
+  <CancelOrder ref="cancelOrderInstance" @onReloadOrderList="getData" />
 </template>
 
 <script>
@@ -53,7 +54,8 @@ export default {
     AppMemberLayout,
   },
   setup() {
-    const { orderList, reqParams, loading, counts, pages } = useOrderList();
+    const { orderList, reqParams, loading, counts, pages, getData } =
+      useOrderList();
     //订单标题的索引
     const current = ref(0);
 
@@ -64,8 +66,9 @@ export default {
     });
     const cancelOrderInstance = ref();
     //取消订单
-    const onCancelOrder = () => {
+    const onCancelOrder = (id) => {
       cancelOrderInstance.value.visible = true;
+      cancelOrderInstance.value.id = id;
     };
     return {
       orderStatus,
@@ -77,6 +80,7 @@ export default {
       pages,
       onCancelOrder,
       cancelOrderInstance,
+      getData,
     };
   },
 };
@@ -113,7 +117,7 @@ function useOrderList() {
   };
   //监听查询条件的变化 重新获取订单列表
   watch(reqParams.value, () => getData(), { immediate: true });
-  return { orderList, reqParams, loading, counts, pages };
+  return { orderList, reqParams, loading, counts, pages, getData };
 }
 </script>
 

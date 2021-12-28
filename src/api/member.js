@@ -29,3 +29,24 @@ export function getOrderList({ page, pageSize, orderState }) {
     orderState,
   });
 }
+
+/**
+ * 取消订单
+ * @param {string} id  要取消订单的id
+ * @param {string} cancelReason  取消理由
+ * @returns {Promise}
+ */
+export function cancelOrder({ id, cancelReason }) {
+  return requestWithToken(`/member/order/${id}/cancel`, "put", {
+    cancelReason,
+  });
+}
+
+/**
+ * 删除订单
+ * @param ids 订单id集合
+ * @returns {Promise}
+ */
+export function deleteOrder(ids) {
+  return requestWithToken("/member/order", "delete", { ids });
+}

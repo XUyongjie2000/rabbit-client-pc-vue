@@ -10,7 +10,11 @@
         <i class="iconfont icon-down-time"></i>
         <b>付款截止：{{ dayjs.unix(count).format("mm分ss秒") }}</b>
       </span>
-      <a v-if="[5, 6].includes(order.orderState)" href="javascript:" class="del"
+      <a
+        @click="deleteOrderHandler(order.id)"
+        v-if="[5, 6].includes(order.orderState)"
+        href="javascript:"
+        class="del"
         >删除</a
       >
     </div>
@@ -86,6 +90,9 @@
 import useCountDown from "@/hooks/useCountDown";
 import dayjs from "dayjs";
 import { orderStatus } from "@/api/constants";
+import Confirm from "@/components/library/Confirm";
+import { deleteOrder } from "@/api/member";
+import Message from "@/components/library/Message";
 
 export default {
   name: "OrderItem",
@@ -106,7 +113,28 @@ export default {
     const onCancelButtonClick = (id) => {
       emit("onCancelOrder", id);
     };
-    return { count, dayjs, orderStatus, onCancelButtonClick };
+    //删除订单
+    const deleteOrderHandler = async (id) => {
+      try {
+        //和用户确认是否删除订单
+        await Confirm({ content: "您确定要删除订单吗" });
+        //发送请求删除订单
+        await deleteOrder([id]);
+        //用户提示
+        Message({ type: "success", text: "删除订单成功" });
+        //重新获取订单列表
+        emit("onReloadOrderList");
+      } catch (error) {
+        Message({ type: "error", text: "删除订单失败" });
+      }
+    };
+    return {
+      count,
+      dayjs,
+      orderStatus,
+      onCancelButtonClick,
+      deleteOrderHandler,
+    };
   },
 };
 </script>
